@@ -12,6 +12,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: postgres -c wal_level=logical 
     networks:
       - paybridge_network
   redis:
@@ -49,6 +50,27 @@ services:
     ports:
       - "9092:9092"
       - "29092:29092"
+    networks:
+      - paybridge_network
+
+  debezium:
+    image: debezium/connect:2.5
+    container_name: paybridge-debezium
+    restart: unless-stopped
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8085:8083"
+    environment:
+      BOOTSTRAP_SERVERS: kafka:29092
+      GROUP_ID: paybridge-debezium
+      CONFIG_STORAGE_TOPIC: debezium.configs
+      OFFSET_STORAGE_TOPIC: debezium.offsets
+      STATUS_STORAGE_TOPIC: debezium.statuses
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
     networks:
       - paybridge_network
       
