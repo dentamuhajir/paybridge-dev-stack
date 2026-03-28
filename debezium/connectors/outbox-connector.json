@@ -1,0 +1,28 @@
+{
+  "name": "paybridge-outbox-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "paybridge-postgres",
+    "database.port": "5432",
+    "database.user": "${DB_USER}",
+    "database.password": "${DB_PASSWORD}",
+    "database.dbname": "${DB_NAME}",
+    "topic.prefix": "paybridge",
+    "table.include.list": "public.outbox_events",
+    "plugin.name": "pgoutput",
+    "slot.name": "debezium_outbox_slot",
+    "publication.name": "dbz_publication",
+    "snapshot.mode": "never",
+
+    "transforms": "outbox",
+    "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+    "transforms.outbox.table.field.event.key": "aggregate_id",
+    "transforms.outbox.table.field.event.payload": "payload",
+    "transforms.outbox.table.field.event.aggregate.type": "aggregatetype",
+    "transforms.outbox.route.by.field": "topic",
+    "transforms.outbox.route.topic.replacement": "${routedByValue}",
+
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter"
+  }
+}
