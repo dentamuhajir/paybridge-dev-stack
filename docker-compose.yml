@@ -73,32 +73,16 @@ services:
       STATUS_STORAGE_REPLICATION_FACTOR: 1
     networks:
       - paybridge_network
-      
-  # mailhog:
-  #   image: mailhog/mailhog:v1.0.1
-  #   container_name: paybridge-mailhog
-  #   ports:
-  #     - "1025:1025"   # SMTP
-  #     - "8025:8025"   # Web UI
-  #   networks:
-  #     - paybridge_network
 
-  # jenkins:
-  #   image: jenkins/jenkins:lts
-  #   container_name: paybridge-jenkins
-  #   user: root
-  #   restart: unless-stopped
-  #   env_file:
-  #     - ./jenkins/jenkins.env
-  #   ports:
-  #     - "${JENKINS_UI_PORT:-18080}:8080"
-  #     - "${JENKINS_AGENT_PORT:-50010}:50000"
-  #   volumes:
-  #     - jenkins_home:/var/jenkins_home
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   networks:
-  #     - paybridge_network
-  
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: paybridge-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - paybridge_network
+      
   otel-collector:
     image: otel/opentelemetry-collector:0.96.0
     container_name: paybridge-otel-collector
